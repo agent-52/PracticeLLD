@@ -4,6 +4,7 @@ import {
   getAttempt,
   getAttempts,
   submitAttempt,
+  getAttemptDetails
 } from "./attempt.service";
 
 const attemptRouter = Router();
@@ -43,6 +44,27 @@ attemptRouter.get(
       res.status(500).json({
         message: "Failed to fetch attempts",
       });
+    }
+  },
+);
+
+attemptRouter.get(
+  "/attempts/:attemptId/details",
+  async (req, res) => {
+    try {
+      const details = await getAttemptDetails(
+        req.sessionId,
+        req.params.attemptId,
+      );
+
+      res.json(details);
+    } catch (error) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : "Failed to fetch attempt details";
+
+      res.status(404).json({ message });
     }
   },
 );

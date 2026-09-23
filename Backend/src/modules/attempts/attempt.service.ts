@@ -85,3 +85,34 @@ export async function submitAttempt(
       status: "SUBMITTED",
     });
 }
+
+export async function getAttemptDetails(
+  sessionId: string,
+  attemptId: string,
+) {
+  const attempt = await db.orm.public.Attempt.first({
+    id: attemptId,
+    sessionId,
+  });
+
+  if (!attempt) {
+    throw new Error("Attempt not found");
+  }
+
+  const submission =
+    await db.orm.public.Submission.first({
+      attemptId,
+    });
+
+  const evaluation = submission
+    ? await db.orm.public.Evaluation.first({
+        submissionId: submission.id,
+      })
+    : null;
+
+  return {
+    attempt,
+    submission,
+    evaluation,
+  };
+}
