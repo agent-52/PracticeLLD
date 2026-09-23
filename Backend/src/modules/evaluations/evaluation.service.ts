@@ -194,3 +194,61 @@ export async function getEvaluation(
     submissionId: submission.id,
   });
 }
+
+export async function retryEvaluation(
+  sessionId: string,
+  attemptId: string,
+) {
+  const attempt = await db.orm.public.Attempt.first({
+    id: attemptId,
+    sessionId,
+  });
+
+  if (!attempt) {
+    throw new Error("Attempt not found");
+  }
+
+  if (attempt.status !== "FAILED") {
+    throw new Error("Only failed evaluations can be retried");
+  }
+
+  const submission =
+    await db.orm.public.Submission.first({
+      attemptId,
+    });
+
+  if (!submission) {
+    throw new Error("Submission not found");
+  }
+
+  const evaluation =
+    await db.orm.public.Evaluation.first({
+      submissionId: submission.id,
+    });
+
+  if (!evaluation) {
+    throw new Error("Evaluation not found");
+  }
+
+  await db.orm.public.Evaluation
+    .where({
+      id: evaluation.id,
+    })
+    .update({
+      status: "PENDING",
+      errorMessage: null,
+      overallScore: null,
+      result: null,
+      completedAt: null,
+    });
+
+  await db.orm.public.Attempt
+    .where({
+      id: attemptId,
+    })
+    .update({
+      status: "EVALUATING",
+    });
+
+  return evaluation.id;
+}

@@ -2,6 +2,7 @@ import { Router } from "express";
 import {
   createEvaluation,
   getEvaluation,
+  retryEvaluation,
   runEvaluation,
 } from "./evaluation.service";
 import { startEvaluation } from "./evaluation.worker";
@@ -68,5 +69,40 @@ evaluationRouter.get(
   },
 );
 
+
+evaluationRouter.post(
+  "/attempts/:attemptId/evaluation/retry",
+  async (req, res) => {
+    try {
+      await retryEvaluation(
+        req.sessionId,
+        req.params.attemptId,
+      );
+
+      startEvaluation(
+        req.sessionId,
+        req.params.attemptId,
+      );
+
+      res.status(202).json({
+        message: "Evaluation retry started",
+      });
+    } catch (error) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : "Failed to retry evaluation";
+
+      const status =
+        message === "Attempt not found" ||
+        message === "Submission not found" ||
+        message === "Evaluation not found"
+          ? 404
+          : 400;
+
+      res.status(status).json({ message });
+    }
+  },
+);
 
 export default evaluationRouter;
