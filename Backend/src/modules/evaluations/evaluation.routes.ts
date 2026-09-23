@@ -4,6 +4,7 @@ import {
   getEvaluation,
   runEvaluation,
 } from "./evaluation.service";
+import { startEvaluation } from "./evaluation.worker";
 
 const evaluationRouter = Router();
 
@@ -16,7 +17,12 @@ evaluationRouter.post(
         req.params.attemptId,
       );
 
-      res.status(201).json(evaluation);
+      startEvaluation(
+        req.sessionId,
+        req.params.attemptId,
+      );
+
+      res.status(202).json(evaluation);
     } catch (error) {
       const message =
         error instanceof Error
@@ -30,27 +36,6 @@ evaluationRouter.post(
           : 400;
 
       res.status(status).json({ message });
-    }
-  },
-);
-
-evaluationRouter.post(
-  "/attempts/:attemptId/evaluation/run",
-  async (req, res) => {
-    try {
-      const evaluation = await runEvaluation(
-        req.sessionId,
-        req.params.attemptId,
-      );
-
-      res.json(evaluation);
-    } catch (error) {
-      const message =
-        error instanceof Error
-          ? error.message
-          : "Evaluation failed";
-
-      res.status(400).json({ message });
     }
   },
 );
