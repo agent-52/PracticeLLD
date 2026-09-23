@@ -2,6 +2,7 @@ import { Router } from "express";
 import {
   createEvaluation,
   getEvaluation,
+  runEvaluation,
 } from "./evaluation.service";
 
 const evaluationRouter = Router();
@@ -33,6 +34,27 @@ evaluationRouter.post(
   },
 );
 
+evaluationRouter.post(
+  "/attempts/:attemptId/evaluation/run",
+  async (req, res) => {
+    try {
+      const evaluation = await runEvaluation(
+        req.sessionId,
+        req.params.attemptId,
+      );
+
+      res.json(evaluation);
+    } catch (error) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : "Evaluation failed";
+
+      res.status(400).json({ message });
+    }
+  },
+);
+
 evaluationRouter.get(
   "/attempts/:attemptId/evaluation",
   async (req, res) => {
@@ -60,5 +82,6 @@ evaluationRouter.get(
     }
   },
 );
+
 
 export default evaluationRouter;
