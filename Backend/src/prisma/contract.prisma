@@ -1,0 +1,62 @@
+// use prisma-8
+
+model Problem {
+  id           String    @id @default(uuid())
+  title        String
+  slug         String    @unique
+  difficulty   String
+  description  String
+  requirements Json
+  constraints  Json
+  rubric       Json
+
+  attempts     Attempt[]
+
+  createdAt    DateTime  @default(now())
+}
+
+model Attempt {
+  id         String   @id @default(uuid())
+  sessionId  String
+  problemId  String
+  status     String   @default("DRAFT")
+
+  problem    Problem  @relation(fields: [problemId], references: [id])
+
+  createdAt  DateTime @default(now())
+
+  @@index([sessionId, problemId])
+}
+
+model Submission {
+  id           String   @id @default(uuid())
+  attemptId    String   @unique
+
+  code         String?
+  explanation  String?
+  diagram      String?
+
+  attempt      Attempt  @relation(fields: [attemptId], references: [id])
+
+  createdAt    DateTime @default(now())
+}
+
+model Evaluation {
+  id            String     @id @default(uuid())
+  submissionId  String     @unique
+
+  evaluatorType String
+  status        String     @default("PENDING")
+
+  overallScore  Int?
+  result        Json?
+  errorMessage  String?
+
+  submission    Submission @relation(
+    fields: [submissionId],
+    references: [id]
+  )
+
+  createdAt     DateTime @default(now())
+  completedAt   DateTime?
+}

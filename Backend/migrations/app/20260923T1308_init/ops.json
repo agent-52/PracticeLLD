@@ -1,0 +1,505 @@
+[
+  {
+    "id": "schema.public",
+    "label": "Create schema \"public\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres"
+    },
+    "precheck": [],
+    "execute": [
+      {
+        "description": "Create schema \"public\"",
+        "sql": "CREATE SCHEMA IF NOT EXISTS \"public\"",
+        "params": []
+      }
+    ],
+    "postcheck": []
+  },
+  {
+    "id": "table.attempt",
+    "label": "Create table \"attempt\"",
+    "summary": "Creates table \"attempt\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "attempt"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"attempt\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"attempt\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"attempt\"",
+        "sql": "CREATE TABLE \"public\".\"attempt\" (\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"id\" text NOT NULL,\n  \"problemId\" text NOT NULL,\n  \"sessionId\" text NOT NULL,\n  \"status\" text DEFAULT 'DRAFT' NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"attempt\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"attempt\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.evaluation",
+    "label": "Create table \"evaluation\"",
+    "summary": "Creates table \"evaluation\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "evaluation"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"evaluation\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"evaluation\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"evaluation\"",
+        "sql": "CREATE TABLE \"public\".\"evaluation\" (\n  \"completedAt\" timestamptz,\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"errorMessage\" text,\n  \"evaluatorType\" text NOT NULL,\n  \"id\" text NOT NULL,\n  \"overallScore\" int4,\n  \"result\" json,\n  \"status\" text DEFAULT 'PENDING' NOT NULL,\n  \"submissionId\" text NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"evaluation\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"evaluation\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.problem",
+    "label": "Create table \"problem\"",
+    "summary": "Creates table \"problem\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "problem"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"problem\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"problem\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"problem\"",
+        "sql": "CREATE TABLE \"public\".\"problem\" (\n  \"constraints\" json NOT NULL,\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"description\" text NOT NULL,\n  \"difficulty\" text NOT NULL,\n  \"id\" text NOT NULL,\n  \"requirements\" json NOT NULL,\n  \"rubric\" json NOT NULL,\n  \"slug\" text NOT NULL,\n  \"title\" text NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"problem\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"problem\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.submission",
+    "label": "Create table \"submission\"",
+    "summary": "Creates table \"submission\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "submission"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"submission\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"submission\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"submission\"",
+        "sql": "CREATE TABLE \"public\".\"submission\" (\n  \"attemptId\" text NOT NULL,\n  \"code\" text,\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"diagram\" text,\n  \"explanation\" text,\n  \"id\" text NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"submission\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"submission\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.evaluation.evaluation_submissionId_key",
+    "label": "Add unique constraint on \"evaluation\" (submissionId)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "evaluation_submissionId_key",
+        "table": "evaluation"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"evaluation_submissionId_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "evaluation_submissionId_key",
+          "public",
+          "\"public\".\"evaluation\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"evaluation_submissionId_key\"",
+        "sql": "ALTER TABLE \"public\".\"evaluation\" ADD CONSTRAINT \"evaluation_submissionId_key\" UNIQUE (\"submissionId\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"evaluation_submissionId_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "evaluation_submissionId_key",
+          "public",
+          "\"public\".\"evaluation\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.problem.problem_slug_key",
+    "label": "Add unique constraint on \"problem\" (slug)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "problem_slug_key",
+        "table": "problem"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"problem_slug_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "problem_slug_key",
+          "public",
+          "\"public\".\"problem\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"problem_slug_key\"",
+        "sql": "ALTER TABLE \"public\".\"problem\" ADD CONSTRAINT \"problem_slug_key\" UNIQUE (\"slug\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"problem_slug_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "problem_slug_key",
+          "public",
+          "\"public\".\"problem\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.submission.submission_attemptId_key",
+    "label": "Add unique constraint on \"submission\" (attemptId)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "submission_attemptId_key",
+        "table": "submission"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"submission_attemptId_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "submission_attemptId_key",
+          "public",
+          "\"public\".\"submission\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"submission_attemptId_key\"",
+        "sql": "ALTER TABLE \"public\".\"submission\" ADD CONSTRAINT \"submission_attemptId_key\" UNIQUE (\"attemptId\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"submission_attemptId_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "submission_attemptId_key",
+          "public",
+          "\"public\".\"submission\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.attempt.attempt_problemId_idx_0024556d",
+    "label": "Create index \"attempt_problemId_idx_0024556d\" on \"attempt\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "attempt_problemId_idx_0024556d",
+        "table": "attempt"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"attempt_problemId_idx_0024556d\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"attempt_problemId_idx_0024556d\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"attempt_problemId_idx_0024556d\"",
+        "sql": "CREATE INDEX \"attempt_problemId_idx_0024556d\" ON \"public\".\"attempt\" (\"problemId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"attempt_problemId_idx_0024556d\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"attempt_problemId_idx_0024556d\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.attempt.attempt_sessionId_problemId_idx_eac919d4",
+    "label": "Create index \"attempt_sessionId_problemId_idx_eac919d4\" on \"attempt\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "attempt_sessionId_problemId_idx_eac919d4",
+        "table": "attempt"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"attempt_sessionId_problemId_idx_eac919d4\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"attempt_sessionId_problemId_idx_eac919d4\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"attempt_sessionId_problemId_idx_eac919d4\"",
+        "sql": "CREATE INDEX \"attempt_sessionId_problemId_idx_eac919d4\" ON \"public\".\"attempt\" (\"sessionId\", \"problemId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"attempt_sessionId_problemId_idx_eac919d4\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"attempt_sessionId_problemId_idx_eac919d4\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.attempt.attempt_problemId_fkey",
+    "label": "Add foreign key \"attempt_problemId_fkey\" on \"attempt\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "attempt_problemId_fkey",
+        "table": "attempt"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"attempt_problemId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "attempt_problemId_fkey",
+          "public",
+          "\"public\".\"attempt\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"attempt_problemId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"attempt\"\nADD CONSTRAINT \"attempt_problemId_fkey\"\nFOREIGN KEY (\"problemId\")\nREFERENCES \"public\".\"problem\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"attempt_problemId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "attempt_problemId_fkey",
+          "public",
+          "\"public\".\"attempt\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.evaluation.evaluation_submissionId_fkey",
+    "label": "Add foreign key \"evaluation_submissionId_fkey\" on \"evaluation\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "evaluation_submissionId_fkey",
+        "table": "evaluation"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"evaluation_submissionId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "evaluation_submissionId_fkey",
+          "public",
+          "\"public\".\"evaluation\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"evaluation_submissionId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"evaluation\"\nADD CONSTRAINT \"evaluation_submissionId_fkey\"\nFOREIGN KEY (\"submissionId\")\nREFERENCES \"public\".\"submission\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"evaluation_submissionId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "evaluation_submissionId_fkey",
+          "public",
+          "\"public\".\"evaluation\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.submission.submission_attemptId_fkey",
+    "label": "Add foreign key \"submission_attemptId_fkey\" on \"submission\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "submission_attemptId_fkey",
+        "table": "submission"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"submission_attemptId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "submission_attemptId_fkey",
+          "public",
+          "\"public\".\"submission\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"submission_attemptId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"submission\"\nADD CONSTRAINT \"submission_attemptId_fkey\"\nFOREIGN KEY (\"attemptId\")\nREFERENCES \"public\".\"attempt\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"submission_attemptId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "submission_attemptId_fkey",
+          "public",
+          "\"public\".\"submission\""
+        ]
+      }
+    ]
+  }
+]
