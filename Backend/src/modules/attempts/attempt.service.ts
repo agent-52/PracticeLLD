@@ -24,11 +24,11 @@ export async function getAttempts(
   problemId: string,
 ) {
   return db.orm.public.Attempt
-    .select("id", "problemId", "status", "createdAt")
     .where({
       sessionId,
       problemId,
     })
+    .select("id", "problemId", "status", "createdAt")
     .orderBy((attempt) => attempt.createdAt.desc())
     .all();
 }
@@ -41,4 +41,47 @@ export async function getAttempt(
     id: attemptId,
     sessionId,
   });
+}
+
+export async function submitAttempt(
+  sessionId: string,
+  attemptId: string,
+) {
+  const attempt = await db.orm.public.Attempt.first({
+    id: attemptId,
+    sessionId,
+  });
+
+  if (!attempt) {
+    throw new Error("Attempt not found");
+  }
+
+  if (attempt.status !== "DRAFT") {
+    throw new Error("Attempt cannot be submitted");
+  }
+
+  const submission = await db.orm.public.Submission.first({
+    attemptId,
+  });
+
+  if (!submission) {
+    throw new Error("Submission not found");
+  }
+
+  const hasContent =
+    Boolean(submission.code?.trim()) ||
+    Boolean(submission.explanation?.trim()) ||
+    Boolean(submission.diagram?.trim());
+
+  if (!hasContent) {
+    throw new Error("Submission cannot be empty");
+  }
+
+  return db.orm.public.Attempt
+    .where({
+      id: attemptId,
+    })
+    .update({
+      status: "SUBMITTED",
+    });
 }

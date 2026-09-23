@@ -1,5 +1,6 @@
 import { db } from "../../prisma/db";
 
+
 export async function createEvaluation(
   sessionId: string,
   attemptId: string,
@@ -34,11 +35,22 @@ export async function createEvaluation(
     return existingEvaluation;
   }
 
-  return db.orm.public.Evaluation.create({
-    submissionId: submission.id,
-    evaluatorType: "AI",
-    status: "PENDING",
-  });
+  const evaluation =
+    await db.orm.public.Evaluation.create({
+      submissionId: submission.id,
+      evaluatorType: "AI",
+      status: "PENDING",
+    });
+
+  await db.orm.public.Attempt
+    .where({
+      id: attemptId,
+    })
+    .update({
+      status: "EVALUATING",
+    });
+
+  return evaluation;
 }
 
 export async function getEvaluation(

@@ -3,6 +3,7 @@ import {
   createAttempt,
   getAttempt,
   getAttempts,
+  submitAttempt,
 } from "./attempt.service";
 
 const attemptRouter = Router();
@@ -67,6 +68,31 @@ attemptRouter.get(
       res.status(500).json({
         message: "Failed to fetch attempt",
       });
+    }
+  },
+);
+attemptRouter.post(
+  "/attempts/:attemptId/submit",
+  async (req, res) => {
+    try {
+      const attempt = await submitAttempt(
+        req.sessionId,
+        req.params.attemptId,
+      );
+
+      res.json(attempt);
+    } catch (error) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : "Failed to submit attempt";
+
+      const status =
+        message === "Attempt not found"
+          ? 404
+          : 400;
+
+      res.status(status).json({ message });
     }
   },
 );
