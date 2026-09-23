@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@js-temporal/polyfill": "^0.5.1",
     "@prisma/client": "^7.10.0",
     "@prisma/orm-postgres": "^8.0.0-rc.11",
     "cors": "^2.8.6",
@@ -20,7 +21,8 @@
     "build": "tsc",
     "start": "node dist/app.js",
     "typecheck": "tsc --noEmit",
-    "contract:emit": "prisma contract emit"
+    "contract:emit": "prisma contract emit",
+    "seed": "tsx src/seed.ts"
   },
   "type": "module"
 }

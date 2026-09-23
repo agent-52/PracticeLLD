@@ -3,6 +3,7 @@ import cors from "cors";
 
 import { env } from "./config/env.js";
 import { errorHandler, notFoundHandler } from "./middlewares/errorHandler.js";
+import { problemRouter } from "./modules/problems/problem.routes.js";
 
 
 export const app = express();
@@ -27,6 +28,7 @@ app.get("/", (_req, res) => {
   });
 });
 
+app.use("/api/problems", problemRouter);
 
 app.use(notFoundHandler);
 app.use(errorHandler);
