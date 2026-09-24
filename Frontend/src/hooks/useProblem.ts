@@ -1,9 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
-import { getProblems } from "../api/problems.api";
+import { getProblem } from "../api/problems.api";
 
-export function useProblems() {
+export function useProblem(slug: string) {
   return useQuery({
-    queryKey: ["problems"],
-    queryFn: getProblems,
+    queryKey: ["problem", slug],
+    queryFn: () => getProblem(slug),
+    enabled: Boolean(slug),
   });
 }

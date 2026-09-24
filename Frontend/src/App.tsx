@@ -1,25 +1,42 @@
-import "./App.css";
-import { useProblems } from "./hooks/useProblem";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 
-function App() {
-  const { data: problems = [], isLoading, isError } = useProblems();
-  console.log("Dashboard rendered", problems);
+import DashboardPage from "./Pages/DashboardPage";
+import ProblemDetailPage from "./Pages/ProblemDetailPage";
 
-  if (isLoading) {
-    return <div>Loading problems...</div>;
-  }
-
-  if (isError) {
-    return <div>Failed to load problems.</div>;
-  }
-
-  return (
-    <div>
-      {problems.map((problem) => (
-        <div key={problem.id}>{problem.title}</div>
-      ))}
-    </div>
-  );
+function PracticePage() {
+  return <div>Practice Workspace</div>;
 }
 
-export default App;
+function FeedbackPage() {
+  return <div>Feedback</div>;
+}
+
+function AttemptHistoryPage() {
+  return <div>Attempt History</div>;
+}
+
+export default function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<DashboardPage />} />
+
+        <Route path="/problems/:slug" element={<ProblemDetailPage />} />
+
+        <Route
+          path="/attempts/:attemptId/practice"
+          element={<PracticePage />}
+        />
+
+        <Route
+          path="/attempts/:attemptId/feedback"
+          element={<FeedbackPage />}
+        />
+
+        <Route path="/history" element={<AttemptHistoryPage />} />
+
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </BrowserRouter>
+  );
+}

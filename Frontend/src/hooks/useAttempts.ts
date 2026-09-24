@@ -1,8 +1,10 @@
-import { useMutation } from "@tanstack/react-query";
-import { createAttempt } from "../api/attempts.api";
+import { useQuery } from "@tanstack/react-query";
+import { getProblemAttempts } from "../api/attempts.api";
 
-export function useCreateAttempt() {
-  return useMutation({
-    mutationFn: createAttempt,
+export function useAttempts(problemId: string) {
+  return useQuery({
+    queryKey: ["attempts", problemId],
+    queryFn: () => getProblemAttempts(problemId),
+    enabled: Boolean(problemId),
   });
 }

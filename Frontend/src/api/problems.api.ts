@@ -1,17 +1,26 @@
 import axios from "axios";
 
 const API_URL =
-  import.meta.env.VITE_API_URL ?? "http://localhost:3000/api";
+  import.meta.env.VITE_API_URL ??
+  "http://localhost:3000/api";
+
+export type Difficulty =
+  | "Easy"
+  | "Medium"
+  | "Hard";
 
 export type Problem = {
   id: string;
   title: string;
   slug: string;
-  difficulty: string;
+  difficulty: Difficulty;
   description: string;
-  requirements: unknown;
-  constraints: unknown;
-  rubric: unknown;
+  requirements: string[];
+  constraints: string[];
+  rubric: Array<{
+    label: string;
+    weight: number;
+  }>;
   createdAt: string;
 };
 
@@ -26,12 +35,13 @@ type ProblemResponse = {
 };
 
 export async function getProblems(): Promise<Problem[]> {
-  const response = await axios.get<ProblemsResponse>(
-    `${API_URL}/problems`,
-    {
-      withCredentials: true,
-    },
-  );
+  const response =
+    await axios.get<ProblemsResponse>(
+      `${API_URL}/problems`,
+      {
+        withCredentials: true,
+      },
+    );
 
   return response.data.data;
 }
@@ -39,12 +49,13 @@ export async function getProblems(): Promise<Problem[]> {
 export async function getProblem(
   slug: string,
 ): Promise<Problem> {
-  const response = await axios.get<ProblemResponse>(
-    `${API_URL}/problems/${slug}`,
-    {
-      withCredentials: true,
-    },
-  );
+  const response =
+    await axios.get<ProblemResponse>(
+      `${API_URL}/problems/${slug}`,
+      {
+        withCredentials: true,
+      },
+    );
 
   return response.data.data;
 }
