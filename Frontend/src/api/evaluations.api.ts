@@ -68,13 +68,12 @@ export async function startEvaluation(
 export async function getEvaluation(
   attemptId: string,
 ): Promise<Evaluation> {
-  const response =
-    await axios.get<Evaluation>(
-      `${API_URL}/attempts/${attemptId}/evaluation`,
-      {
-        withCredentials: true,
-      },
-    );
+  const response = await axios.get<Evaluation>(
+    `${API_URL}/attempts/${attemptId}/evaluation`,
+    {
+      withCredentials: true,
+    },
+  );
 
   return response.data;
 }

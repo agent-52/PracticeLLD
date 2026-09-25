@@ -20,6 +20,7 @@ export type DashboardProblem = {
 };
 
 export type RecentActivity = {
+  attemptId: string;
   problem: string;
   attempt: number;
   score: number;

@@ -1158,11 +1158,67 @@ export default function FeedbackPage() {
    */
   const evaluation = evaluationQuery.data;
 
-  if (
-    !evaluation ||
-    evaluation.status === "PENDING" ||
-    evaluation.status === "RUNNING"
-  ) {
+  if (!evaluation) {
+    const isDraft = attempt.status === "DRAFT";
+
+    return (
+      <div
+        className="min-h-screen flex items-center justify-center"
+        style={{
+          backgroundColor: "var(--color-background)",
+          fontFamily: "var(--font-ui)",
+        }}
+      >
+        <div className="text-center">
+          <p
+            className="text-base font-semibold mb-2"
+            style={{
+              color: "var(--color-text-primary)",
+            }}
+          >
+            {isDraft
+              ? "This attempt has not been submitted yet."
+              : "Feedback is not available for this attempt."}
+          </p>
+
+          <p
+            className="text-sm mb-5"
+            style={{
+              color: "var(--color-text-secondary)",
+            }}
+          >
+            {isDraft
+              ? "Continue your attempt to submit it for evaluation."
+              : "No evaluation was found for this attempt."}
+          </p>
+
+          <button
+            type="button"
+            onClick={() => {
+              if (isDraft) {
+                navigate(
+                  `/problems/${problem.slug}/attempts/${attempt.id}/practice`,
+                );
+              } else {
+                navigate("/");
+              }
+            }}
+            className="py-2 px-4 text-sm font-medium text-white"
+            style={{
+              backgroundColor: "var(--color-accent)",
+              borderRadius: "var(--radius-md)",
+              border: "none",
+              cursor: "pointer",
+            }}
+          >
+            {isDraft ? "Continue Attempt" : "Back to Problems"}
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (evaluation.status === "PENDING" || evaluation.status === "RUNNING") {
     return (
       <LoadingScreen
         title={problem.title}

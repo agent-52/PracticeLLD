@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useDashboard } from "../hooks/useDashboard";
 import ScoreBar from "../components/dashboard/ScoreBar";
 import ProblemCard from "../components/dashboard/ProblemCard";
+import { useNavigate } from "react-router-dom";
 
 type Difficulty = "Easy" | "Medium" | "Hard";
 
@@ -15,6 +16,7 @@ type Difficulty = "Easy" | "Medium" | "Hard";
 // }
 
 export default function DashboardPage() {
+  const navigate = useNavigate();
   const [search, setSearch] = useState("");
   const [difficultyFilter, setDifficultyFilter] = useState<"All" | Difficulty>(
     "All",
@@ -206,7 +208,10 @@ export default function DashboardPage() {
               <tbody>
                 {recentActivity.map((item, i) => (
                   <tr
-                    key={i}
+                    key={`${item.problem}-${item.attempt}-${i}`}
+                    onClick={() =>
+                      navigate(`/attempts/${item.attemptId}/feedback`)
+                    }
                     className="border-b last:border-b-0 border-[var(--color-border)] hover:bg-[var(--color-background)] transition-colors"
                   >
                     <td className="px-5 py-3.5">

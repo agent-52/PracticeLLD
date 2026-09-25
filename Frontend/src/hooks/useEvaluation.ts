@@ -5,31 +5,16 @@ export function useEvaluation(
   attemptId: string | undefined,
 ) {
   return useQuery({
-    queryKey: [
-      "evaluation",
-      attemptId,
-    ],
-
-    queryFn: () =>
-      getEvaluation(attemptId!),
-
+    queryKey: ["evaluation", attemptId],
+    queryFn: () => getEvaluation(attemptId!),
     enabled: Boolean(attemptId),
-
     retry: false,
-
     refetchInterval: (query) => {
-      const evaluation =
-        query.state.data;
-
-      if (!evaluation) {
-        return 1000;
-      }
+      const evaluation = query.state.data;
 
       if (
-        evaluation.status ===
-          "PENDING" ||
-        evaluation.status ===
-          "RUNNING"
+        evaluation?.status === "PENDING" ||
+        evaluation?.status === "RUNNING"
       ) {
         return 1500;
       }
