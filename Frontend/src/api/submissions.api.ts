@@ -19,15 +19,47 @@ export type Submission = {
 };
 
 type ApiResponse<T> = {
-  success: boolean;
-  data: T;
+  success?: boolean;
+  data?: T;
 };
+
+function normalizeSubmission(body: unknown): Submission {
+  // Case 1:
+  // { success: true, data: { ...submission } }
+  if (
+    typeof body === "object" &&
+    body !== null &&
+    "data" in body
+  ) {
+    const data = (body as ApiResponse<unknown>).data;
+
+    if (
+      typeof data === "object" &&
+      data !== null &&
+      "id" in data
+    ) {
+      return data as Submission;
+    }
+  }
+
+  // Case 2:
+  // { ...submission }
+  if (
+    typeof body === "object" &&
+    body !== null &&
+    "id" in body
+  ) {
+    return body as Submission;
+  }
+
+  throw new Error("Invalid submission response from backend");
+}
 
 export async function saveSubmission(
   attemptId: string,
   input: SaveSubmissionInput,
 ): Promise<Submission> {
-  const response = await axios.put<ApiResponse<Submission>>(
+  const response = await axios.put(
     `${API_URL}/attempts/${attemptId}/submission`,
     input,
     {
@@ -35,5 +67,7 @@ export async function saveSubmission(
     },
   );
 
-  return response.data.data;
+  console.log("SAVE SUBMISSION RESPONSE:", response.data);
+
+  return normalizeSubmission(response.data);
 }

@@ -3,10 +3,7 @@ import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import DashboardPage from "./Pages/DashboardPage";
 import ProblemDetailPage from "./Pages/ProblemDetailPage";
 import PracticePage from "./Pages/PracticePage";
-
-function FeedbackPage() {
-  return <div>Feedback</div>;
-}
+import FeedbackPage from "./Pages/FeedbackPage";
 
 function AttemptHistoryPage() {
   return <div>Attempt History</div>;

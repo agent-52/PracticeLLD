@@ -441,37 +441,37 @@ export default function PracticePage() {
    * Save draft.
    */
   const handleSaveDraft = async () => {
-    if (!attemptId || submitted) {
+    if (!attemptId || submitted || saving || submitting) {
       return;
     }
 
     try {
       setSaving(true);
 
-      const response = await saveSubmission(attemptId, {
+      const savedSubmission = await saveSubmission(attemptId, {
         code,
         explanation,
         diagram: null,
       });
 
-      setLastSavedAt(response.createdAt);
+      // Backend response mein createdAt aaye to use karo.
+      // Agar nahi aaye to current time use karo.
+      setLastSavedAt(savedSubmission?.createdAt ?? new Date().toISOString());
     } catch (error) {
       console.error("Failed to save draft:", error);
+
+      window.alert(
+        error instanceof Error
+          ? error.message
+          : "Failed to save draft. Please try again.",
+      );
     } finally {
       setSaving(false);
     }
   };
 
-  /*
-   * Submit:
-   *
-   * 1. Save latest code/explanation
-   * 2. Mark attempt submitted
-   * 3. Start background evaluation
-   * 4. Navigate to feedback
-   */
   const handleSubmit = async () => {
-    if (!attemptId || submitted) {
+    if (!attemptId || submitted || submitting) {
       return;
     }
 
@@ -482,40 +482,33 @@ export default function PracticePage() {
 
     try {
       setSubmitting(true);
-
       setShowModal(false);
 
-      /*
-       * 1. Save latest content.
-       */
+      // 1. Save latest solution
       await saveSubmission(attemptId, {
         code,
         explanation,
         diagram: null,
       });
 
-      /*
-       * 2. Mark attempt as submitted.
-       */
+      // 2. Mark attempt as submitted
       await submitAttempt(attemptId);
 
       setSubmitted(true);
 
-      /*
-       * 3. Start async evaluation.
-       */
+      // 3. Start async evaluation
       await startEvaluation(attemptId);
 
-      /*
-       * 4. Go to feedback page.
-       *
-       * Evaluation runs in the backend.
-       */
+      // 4. Go to feedback
       navigate(`/attempts/${attemptId}/feedback`);
     } catch (error) {
       console.error("Failed to submit solution:", error);
 
-      window.alert("Failed to submit solution. Please try again.");
+      window.alert(
+        error instanceof Error
+          ? error.message
+          : "Failed to submit solution. Please try again.",
+      );
     } finally {
       setSubmitting(false);
     }

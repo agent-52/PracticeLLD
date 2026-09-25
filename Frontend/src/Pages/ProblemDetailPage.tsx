@@ -5,8 +5,12 @@ import { useCreateAttempt } from "../hooks/useCreateAttempt";
 
 function formatDate(date: string) {
   const value = new Date(date);
-  const now = new Date();
 
+  if (Number.isNaN(value.getTime())) {
+    return "Unknown";
+  }
+
+  const now = new Date();
   const diff = now.getTime() - value.getTime();
 
   const day = 24 * 60 * 60 * 1000;
@@ -20,6 +24,28 @@ function formatDate(date: string) {
   }
 
   return value.toLocaleDateString();
+}
+
+function getStatusLabel(status: string) {
+  switch (status) {
+    case "COMPLETED":
+      return "Completed";
+
+    case "EVALUATING":
+      return "Evaluating";
+
+    case "SUBMITTED":
+      return "Submitted";
+
+    case "FAILED":
+      return "Failed";
+
+    case "DRAFT":
+      return "Draft";
+
+    default:
+      return status;
+  }
 }
 
 export default function ProblemDetailPage() {
@@ -67,7 +93,7 @@ export default function ProblemDetailPage() {
   const attempts = attemptsQuery.data ?? [];
 
   const startAttempt = async () => {
-    if (!problem?.id) {
+    if (!problem.id) {
       window.alert("Problem information is missing.");
       return;
     }
@@ -87,6 +113,10 @@ export default function ProblemDetailPage() {
         window.alert("Failed to start attempt.");
       }
     }
+  };
+
+  const openAttempt = (attemptId: string) => {
+    navigate(`/attempts/${attemptId}/feedback`);
   };
 
   return (
@@ -270,7 +300,7 @@ export default function ProblemDetailPage() {
                             </span>
                           ) : (
                             <span className="font-mono text-[12px] text-[var(--color-text-muted)]">
-                              {attempt.status}
+                              {getStatusLabel(attempt.status)}
                             </span>
                           )}
 
@@ -280,16 +310,13 @@ export default function ProblemDetailPage() {
                         </div>
                       </div>
 
-                      {attempt.score !== null && (
-                        <button
-                          onClick={() =>
-                            navigate(`/attempts/${attempt.id}/feedback`)
-                          }
-                          className="text-[12px] font-medium text-[var(--color-accent)]"
-                        >
-                          View Feedback →
-                        </button>
-                      )}
+                      {/* Open any existing attempt */}
+                      <button
+                        onClick={() => openAttempt(attempt.id)}
+                        className="text-[12px] font-medium text-[var(--color-accent)]"
+                      >
+                        View Feedback →
+                      </button>
                     </div>
                   ))}
                 </div>
