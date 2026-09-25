@@ -3,7 +3,6 @@ import { createAttempt } from "../api/attempts.api";
 
 export function useCreateAttempt() {
   return useMutation({
-    mutationFn: (problemId: string) =>
-      createAttempt(problemId),
+    mutationFn: (problemId: string) => createAttempt(problemId),
   });
 }
