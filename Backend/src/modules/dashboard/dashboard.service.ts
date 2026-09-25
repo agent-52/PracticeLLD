@@ -65,11 +65,12 @@ export async function getDashboard(sessionId: string) {
 
   const attemptNumbers = new Map<string, number>();
   const recentActivity: Array<{
-    problem: string;
-    attempt: number;
-    score: number;
-    when: string;
-  }> = [];
+  attemptId: string;
+  problem: string;
+  attempt: number;
+  score: number;
+  when: string;
+}> = [];
 
   for (const attempt of allAttempts) {
     const problem = problems.find(
@@ -107,11 +108,12 @@ export async function getDashboard(sessionId: string) {
     }
 
     recentActivity.push({
-      problem: problem.title,
-      attempt: currentNumber,
-      score: evaluation.overallScore,
-      when: attempt.createdAt.toString(),
-    });
+  attemptId: attempt.id,
+  problem: problem.title,
+  attempt: currentNumber,
+  score: evaluation.overallScore,
+  when: attempt.createdAt.toString(),
+});
 
     if (recentActivity.length === 5) {
       break;

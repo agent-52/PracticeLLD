@@ -242,15 +242,17 @@ export async function getEvaluation(
     });
 
   if (!submission) {
-    throw new Error(
-      "Submission not found",
-    );
+    throw new Error("Submission not found");
   }
 
-  return db.orm.public.Evaluation.first({
-    submissionId: submission.id,
-  });
+  const evaluation =
+    await db.orm.public.Evaluation.first({
+      submissionId: submission.id,
+    });
+
+  return evaluation;
 }
+
 
 export async function retryEvaluation(
   sessionId: string,
