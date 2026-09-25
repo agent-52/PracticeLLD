@@ -88,22 +88,6 @@ Submission
 |
 Evaluation
 
-## Main API Routes
-
-GET /api/problems
-GET /api/problems/:slug
-
-POST /api/problems/:problemId/attempts
-GET /api/problems/:problemId/attempts
-
-GET /api/attempts/:attemptId
-GET /api/attempts/:attemptId/details
-POST /api/attempts/:attemptId/submit
-
-POST /api/attempts/:attemptId/evaluation
-GET /api/attempts/:attemptId/evaluation
-POST /api/attempts/:attemptId/evaluation/retry
-
 ## AI Evaluation
 
 After submission, the solution is evaluated using the problem requirements and the submitted solution.
@@ -119,29 +103,6 @@ Extensibility
 Overall design
 
 The evaluation result contains a score and structured feedback.
-
-## Local Setup
-
-Backend
-cd Backend
-npm install
-npm run dev
-
-Backend environment variables:
-
-DATABASE_URL=your_postgresql_url
-EVALUATOR_TYPE=ai
-GROQ_API_KEY=your_groq_api_key
-GROQ_MODEL=openai/gpt-oss-120b
-FRONTEND_URL=http://localhost:5173
-Frontend
-cd Frontend
-npm install
-npm run dev
-
-Frontend environment variable:
-
-VITE_API_URL=http://localhost:3000/api
 
 ## User Flow
 
@@ -168,3 +129,28 @@ Detailed AI usage is documented in AI_USAGE.md.
 ## Scope
 
 This MVP focuses on the core LLD practice flow. Authentication, advanced analytics, more problems, and other advanced features can be added later.
+
+## Local Setup
+
+Backend
+cd Backend
+npm install
+npm run dev
+
+Backend environment variables:
+
+DATABASE_URL=your_postgresql_url
+EVALUATOR_TYPE=ai
+GROQ_API_KEY=your_groq_api_key
+GROQ_MODEL=openai/gpt-oss-120b
+FRONTEND_URL=http://localhost:5173
+
+Frontend
+
+cd Frontend
+npm install
+npm run dev
+
+Frontend environment variable:
+
+VITE_API_URL=http://localhost:3000/api
