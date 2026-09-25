@@ -4,6 +4,12 @@ export async function createAttempt(
   sessionId: string,
   problemId: string,
 ) {
+
+  console.log("CREATE ATTEMPT:", {
+    sessionId,
+    problemId,
+  });
+
   const problem = await db.orm.public.Problem.first({
     id: problemId,
   });
@@ -129,6 +135,11 @@ export async function getAttemptDetails(
   sessionId: string,
   attemptId: string,
 ) {
+
+  console.log("GET ATTEMPT DETAILS:", {
+    sessionId,
+    attemptId,
+  });
   const attempt = await db.orm.public.Attempt.first({
     id: attemptId,
     sessionId,

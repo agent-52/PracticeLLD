@@ -6,13 +6,22 @@ export function sessionMiddleware(
   res: Response,
   next: NextFunction,
 ): void {
-  const sessionId = req.cookies?.lld_session ?? randomUUID();
+  const existingSession = req.cookies?.lld_session;
+  const sessionId = existingSession ?? randomUUID();
+
+  console.log("SESSION DEBUG:", {
+    existingSession,
+    sessionId,
+    path: req.path,
+  });
 
   req.sessionId = sessionId;
 
-  if (!req.cookies?.lld_session) {
+  if (!existingSession) {
     res.cookie("lld_session", sessionId, {
       httpOnly: true,
+      secure: true,
+      sameSite: "none",
       maxAge: 30 * 24 * 60 * 60 * 1000,
     });
   }
