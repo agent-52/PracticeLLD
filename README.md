@@ -154,3 +154,9 @@ npm run dev
 Frontend environment variable:
 
 VITE_API_URL=http://localhost:3000/api
+
+## Links
+
+- [Live Demo](https://practice-lld-seven.vercel.app)
+- [Project Demo Video](https://drive.google.com/file/d/16C-3JqRxNH33SRHuw8IHikId1ZaXS_D8/view?usp=sharing)
+- [AI Usage](AI_USAGE.md)
