@@ -45,20 +45,7 @@ export type AttemptDetails = {
   evaluation: Evaluation | null;
 };
 
-type ApiResponse<T> = {
-  success?: boolean;
-  data?: T;
-};
 
-/**
- * Normalizes an attempt returned by the backend.
- *
- * Supports both:
- *   { success: true, data: attempt }
- *
- * and:
- *   attempt
- */
 function normalizeAttempt(raw: unknown): Attempt {
   if (
     typeof raw !== "object" ||

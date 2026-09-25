@@ -483,7 +483,6 @@ function FailedScreen({
 /* -------------------------------------------------------------------------- */
 
 function FeedbackScreen({
-  title,
   attemptNumber,
   result,
   attemptId,
