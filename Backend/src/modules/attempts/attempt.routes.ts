@@ -5,7 +5,7 @@ import {
   getAttempts,
   submitAttempt,
   getAttemptDetails
-} from "./attempt.service";
+} from "./attempt.service.js";
 
 const attemptRouter = Router();
 

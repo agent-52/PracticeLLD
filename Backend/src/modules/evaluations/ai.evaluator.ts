@@ -2,7 +2,7 @@ import type {
   Evaluator,
   EvaluationInput,
   EvaluationResult,
-} from "./evaluator";
+} from "./evaluator.js";
 
 type GroqResponse = {
   choices?: Array<{

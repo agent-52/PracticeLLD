@@ -1,5 +1,5 @@
 import { Router, type Request, type Response } from "express";
-import { getProblemBySlug, getProblems } from "./problem.service";
+import { getProblemBySlug, getProblems } from "./problem.service.js";
 
 export const problemRouter = Router();
 

@@ -2,7 +2,7 @@ import { Router } from "express";
 import {
   getSubmission,
   saveSubmission,
-} from "./submission.service";
+} from "./submission.service.js";
 
 const submissionRouter = Router();
 

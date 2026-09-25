@@ -4,11 +4,11 @@ import {
   createEvaluation,
   getEvaluation,
   retryEvaluation,
-} from "./evaluation.service";
+} from "./evaluation.service.js";
 
 import {
   startEvaluation,
-} from "./evaluation.worker";
+} from "./evaluation.worker.js";
 
 const evaluationRouter =
   Router();

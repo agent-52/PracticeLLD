@@ -1,6 +1,6 @@
 import {
   runEvaluation,
-} from "./evaluation.service";
+} from "./evaluation.service.js";
 
 export function startEvaluation(
   sessionId: string,

@@ -3,7 +3,7 @@ import type {
   EvaluationInput,
   EvaluationResult,
   RubricEvaluation,
-} from "./evaluator";
+} from "./evaluator.js";
 
 function parseRubric(
   rubric: unknown,

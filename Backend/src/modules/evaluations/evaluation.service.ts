@@ -1,7 +1,7 @@
-import { db } from "../../prisma/db";
-import { MockEvaluator } from "./mock.evaluator";
-import { AiEvaluator } from "./ai.evaluator";
-import type { Evaluator } from "./evaluator";
+import { db } from "../../prisma/db.js";
+import { MockEvaluator } from "./mock.evaluator.js";
+import { AiEvaluator } from "./ai.evaluator.js";
+import type { Evaluator } from "./evaluator.js";
 
 function createEvaluator(): Evaluator {
   const evaluatorType = process.env.EVALUATOR_TYPE ?? "mock";

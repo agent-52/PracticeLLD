@@ -1,4 +1,4 @@
-import { db } from "../../prisma/db";
+import { db } from "../../prisma/db.js";
 
 export async function getDashboard(sessionId: string) {
   const problems = await db.orm.public.Problem
