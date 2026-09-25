@@ -6,17 +6,20 @@ export const problemRouter = Router();
 problemRouter.get("/", async (_req: Request, res: Response) => {
   try {
     const problems = await getProblems();
+    console.log("db query ran successfully")
 
     res.status(200).json({
       success: true,
       data: problems,
     });
-  } catch {
+  } catch(error) {
     res.status(500).json({
       success: false,
       error: {
         code: "PROBLEMS_FETCH_FAILED",
-        message: "Failed to fetch problems",
+        message:  error instanceof Error
+          ? error.message
+          : "Failed to fetch problems",
       },
     });
   }

@@ -23,16 +23,55 @@ export async function getAttempts(
   sessionId: string,
   problemId: string,
 ) {
-  return db.orm.public.Attempt
+  const attempts = await db.orm.public.Attempt
     .where({
       sessionId,
       problemId,
     })
-    .select("id", "problemId", "status", "createdAt")
-    .orderBy((attempt) => attempt.createdAt.desc())
+    .select(
+      "id",
+      "problemId",
+      "status",
+      "createdAt",
+    )
     .all();
-}
 
+  const result = [];
+
+  for (const [index, attempt] of attempts.entries()) {
+    const submission =
+      await db.orm.public.Submission.first({
+        attemptId: attempt.id,
+      });
+
+    let score: number | null = null;
+
+    if (submission) {
+      const evaluation =
+        await db.orm.public.Evaluation.first({
+          submissionId: submission.id,
+        });
+
+      if (
+        evaluation?.status === "COMPLETED" &&
+        evaluation.overallScore !== null
+      ) {
+        score = evaluation.overallScore;
+      }
+    }
+
+    result.push({
+      id: attempt.id,
+      problemId: attempt.problemId,
+      status: attempt.status,
+      createdAt: attempt.createdAt,
+      score,
+      number: index + 1,
+    });
+  }
+
+  return result;
+}
 export async function getAttempt(
   sessionId: string,
   attemptId: string,

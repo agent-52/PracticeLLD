@@ -1,3 +1,4 @@
+import "temporal-polyfill/global";
 import express from "express";
 import cors from "cors";
 
@@ -9,6 +10,7 @@ import { sessionMiddleware } from "./middlewares/session.js";
 import attemptRouter from "./modules/attempts/attempt.routes.js";
 import submissionRouter from "./modules/submissions/submission.routes.js";
 import evaluationRouter from "./modules/evaluations/evaluation.routes.js";
+import dashboardRouter from "./modules/dashboard/dashboard.routes.js";
 
 
 export const app = express();
@@ -37,6 +39,11 @@ app.get("/", (_req, res) => {
 app.use("/api", sessionMiddleware, attemptRouter);
 app.use("/api", sessionMiddleware, submissionRouter);
 app.use("/api", sessionMiddleware, evaluationRouter);
+app.use(
+  "/api",
+  sessionMiddleware,
+  dashboardRouter,
+);
 
 app.use("/api/problems", problemRouter);
 

@@ -1,29 +1,36 @@
 import { Router } from "express";
+
 import {
   createEvaluation,
   getEvaluation,
   retryEvaluation,
-  runEvaluation,
 } from "./evaluation.service";
-import { startEvaluation } from "./evaluation.worker";
 
-const evaluationRouter = Router();
+import {
+  startEvaluation,
+} from "./evaluation.worker";
+
+const evaluationRouter =
+  Router();
 
 evaluationRouter.post(
   "/attempts/:attemptId/evaluation",
   async (req, res) => {
     try {
-      const evaluation = await createEvaluation(
-        req.sessionId,
-        req.params.attemptId,
-      );
+      const evaluation =
+        await createEvaluation(
+          req.sessionId,
+          req.params.attemptId,
+        );
 
       startEvaluation(
         req.sessionId,
         req.params.attemptId,
       );
 
-      res.status(202).json(evaluation);
+      return res.status(202).json(
+        evaluation,
+      );
     } catch (error) {
       const message =
         error instanceof Error
@@ -36,7 +43,9 @@ evaluationRouter.post(
           ? 404
           : 400;
 
-      res.status(status).json({ message });
+      return res
+        .status(status)
+        .json({ message });
     }
   },
 );
@@ -45,30 +54,31 @@ evaluationRouter.get(
   "/attempts/:attemptId/evaluation",
   async (req, res) => {
     try {
-      const evaluation = await getEvaluation(
-        req.sessionId,
-        req.params.attemptId,
-      );
+      const evaluation =
+        await getEvaluation(
+          req.sessionId,
+          req.params.attemptId,
+        );
 
       if (!evaluation) {
-        res.status(404).json({
+        return res.status(404).json({
           message: "Evaluation not found",
         });
-        return;
       }
 
-      res.json(evaluation);
+      return res.json(evaluation);
     } catch (error) {
       const message =
         error instanceof Error
           ? error.message
           : "Failed to fetch evaluation";
 
-      res.status(404).json({ message });
+      return res
+        .status(404)
+        .json({ message });
     }
   },
 );
-
 
 evaluationRouter.post(
   "/attempts/:attemptId/evaluation/retry",
@@ -84,8 +94,9 @@ evaluationRouter.post(
         req.params.attemptId,
       );
 
-      res.status(202).json({
-        message: "Evaluation retry started",
+      return res.status(202).json({
+        message:
+          "Evaluation retry started",
       });
     } catch (error) {
       const message =
@@ -100,7 +111,9 @@ evaluationRouter.post(
           ? 404
           : 400;
 
-      res.status(status).json({ message });
+      return res
+        .status(status)
+        .json({ message });
     }
   },
 );

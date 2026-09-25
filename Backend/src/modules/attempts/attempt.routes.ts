@@ -18,7 +18,10 @@ attemptRouter.post(
         req.params.problemId,
       );
 
-      res.status(201).json(attempt);
+       return res.status(201).json({
+        success: true,
+        data: attempt,
+      });
     } catch (error) {
       const message =
         error instanceof Error
