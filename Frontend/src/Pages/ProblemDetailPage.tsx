@@ -67,12 +67,25 @@ export default function ProblemDetailPage() {
   const attempts = attemptsQuery.data ?? [];
 
   const startAttempt = async () => {
+    if (!problem?.id) {
+      window.alert("Problem information is missing.");
+      return;
+    }
+
     try {
       const attempt = await createAttemptMutation.mutateAsync(problem.id);
 
-      navigate(`/attempts/${attempt.id}/practice`);
+      console.log("NEW ATTEMPT:", attempt);
+
+      navigate(`/problems/${problem.slug}/attempts/${attempt.id}/practice`);
     } catch (error) {
       console.error("Failed to create attempt:", error);
+
+      if (error instanceof Error) {
+        window.alert(`Failed to start attempt: ${error.message}`);
+      } else {
+        window.alert("Failed to start attempt.");
+      }
     }
   };
 

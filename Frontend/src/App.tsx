@@ -2,10 +2,7 @@ import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 
 import DashboardPage from "./Pages/DashboardPage";
 import ProblemDetailPage from "./Pages/ProblemDetailPage";
-
-function PracticePage() {
-  return <div>Practice Workspace</div>;
-}
+import PracticePage from "./Pages/PracticePage";
 
 function FeedbackPage() {
   return <div>Feedback</div>;
@@ -24,7 +21,7 @@ export default function App() {
         <Route path="/problems/:slug" element={<ProblemDetailPage />} />
 
         <Route
-          path="/attempts/:attemptId/practice"
+          path="/problems/:slug/attempts/:attemptId/practice"
           element={<PracticePage />}
         />
 
